@@ -78,35 +78,7 @@
 
     <!-- Logika za dugme -->
     <script>
-        const btn = document.getElementById('checkInBtn');
-        const counter = document.getElementById('queueCounter');
-        const statusText = document.getElementById('queueStatus');
-        let inQueue = false;
-
-        btn.addEventListener('click', () => {
-            if (!inQueue) {
-                btn.innerText = 'Odjavi se iz reda';
-                btn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
-                btn.classList.add('bg-red-500', 'hover:bg-red-600');
-                counter.innerText = '1';
-                statusText.innerText = 'Vi ste trenutno u redu';
-                statusText.classList.remove('text-gray-400');
-                statusText.classList.add('text-emerald-600', 'font-bold');
-                inQueue = true;
-            } else {
-                btn.innerText = 'Check-in';
-                btn.classList.remove('bg-red-500', 'hover:bg-red-600');
-                btn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
-                counter.innerText = '0';
-                statusText.innerText = 'Nema ljudi u redu';
-                statusText.classList.remove('text-emerald-600', 'font-bold');
-                statusText.classList.add('text-gray-400');
-                inQueue = false;
-            }
-        });
-    </script>
- <!-- Učitavanje najnovijih Firebase modula sa zvaničnog veba -->
-<script type="module">
+    <script type="module">
   import { initializeApp } from "https://gstatic.com";
   import { getDatabase, ref, set, onValue } from "https://gstatic.com";
 
@@ -126,46 +98,44 @@
   const database = getDatabase(app);
   const statusRef = ref(database, 'punjac_galenika/status');
 
-  // Selektovanje tvojih elemenata sa stranice
+  // Selektovanje elemenata sa stranice
   const statusBadge = document.getElementById("status-tekst");
   const checkInBtn = document.getElementById("check-in-btn");
 
   let trenutnoZauzet = false;
 
-  // 1. SLUŠANJE PROMENA U REALNOM VREMENU (Automatski menja ekran svima)
+  // 1. SLUŠANJE PROMENA U REALNOM VREMENU (Menja ekran bez osvežavanja)
   onValue(statusRef, (snapshot) => {
     const statusIzBaze = snapshot.val();
     
     if (statusIzBaze === 'zauzet') {
       trenutnoZauzet = true;
       
-      // Izgled ekrana kada je punjač zauzet
+      // Izgled kada je PUNJAČ ZAUZET (Crvene moderne Tailwind boje)
       statusBadge.innerText = "Zauzet";
-      statusBadge.style.color = "#ef4444"; // Crveni tekst
-      statusBadge.style.backgroundColor = "#fee2e2"; // Svetlo crvena pozadina
+      statusBadge.className = "absolute top-5 right-5 px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600 border border-red-200";
       
+      // Izgled dugmeta kada je zauzeto (Sivo dugme)
       checkInBtn.innerText = "Check-out (Oslobodi punjač)";
-      checkInBtn.style.backgroundColor = "#6b7280"; // Siva boja dugmeta
+      checkInBtn.className = "w-full py-3 mt-4 text-white font-medium rounded-xl bg-gray-500 hover:bg-gray-600 transition duration-200 shadow-md";
     } else {
       trenutnoZauzet = false;
       
-      // Izgled ekrana kada je punjač slobodan
+      // Izgled kada je PUNJAČ SLOBODAN (Zelene moderne Tailwind boje)
       statusBadge.innerText = "Slobodan";
-      statusBadge.style.color = "#10b981"; // Zeleni tekst
-      statusBadge.style.backgroundColor = "#e6f7ed"; // Svetlo zelena pozadina
+      statusBadge.className = "absolute top-5 right-5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200";
       
+      // Izgled dugmeta kada je slobodno (Zeleno dugme)
       checkInBtn.innerText = "Check-in";
-      checkInBtn.style.backgroundColor = "#10b981"; // Zeleno dugme
+      checkInBtn.className = "w-full py-3 mt-4 text-white font-medium rounded-xl bg-emerald-500 hover:bg-emerald-600 transition duration-200 shadow-md";
     }
   });
 
-  // 2. REAKCIJA NA KLIK DUGMETA (Upisivanje novog stanja u Firebase)
+  // 2. AKCIJA NA KLIK DUGMETA
   checkInBtn.addEventListener('click', () => {
     if (!trenutnoZauzet) {
-      // Ako je slobodan, klikom ga prebacujemo u zauzeto
       set(statusRef, 'zauzet');
     } else {
-      // Ako je zauzet, klikom ga oslobađamo
       set(statusRef, 'slobodan');
     }
   });
