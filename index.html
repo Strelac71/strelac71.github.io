@@ -1,41 +1,50 @@
-
 <!DOCTYPE html>
 <html lang="sr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EV Punjači - Lidl Galenika</title>
-    <script src="https://jsdelivr.net"></script>
+    <!-- Univerzalni Tailwind CSS v3 koji radi na svim mobilnim telefonima -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome ikonice -->
     <link rel="stylesheet" href="https://cloudflare.com">
 </head>
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col items-center p-4">
 
+    <!-- Glavni kontejner aplikacije -->
     <div class="w-full max-w-md bg-white rounded-3xl shadow-sm p-6 mt-6 border border-gray-100">
         
+        <!-- Zaglavlje sa munjom i naslovom -->
         <div class="text-center mb-6">
             <div class="text-amber-400 text-4xl mb-2">⚡</div>
             <h1 class="text-3xl font-bold text-gray-800 tracking-tight">EV Punjači</h1>
             <p class="text-gray-500 text-lg mt-1">Lidl Galenika</p>
             
+            <!-- Online status -->
             <div class="inline-flex items-center justify-center bg-emerald-50 text-emerald-600 font-medium px-4 py-1 rounded-full text-sm mt-3 border border-emerald-100">
                 <span class="mr-1.5 text-xs">✓</span> Online
             </div>
         </div>
 
+        <!-- Glavna kartica punjača -->
         <div class="border-2 border-emerald-400 rounded-2xl p-5 mb-5 relative bg-white shadow-sm">
             
+            <!-- Status bedž: Slobodan -->
             <div class="absolute top-5 right-5 bg-emerald-50 text-emerald-600 font-semibold px-3 py-1 rounded-full text-sm border border-emerald-100">
                 Slobodan
             </div>
 
+            <!-- Detalji o lokaciji -->
             <div class="pr-20">
                 <h2 class="text-xl font-bold text-gray-800 leading-snug">EV Punjač Lidl Galenika</h2>
                 
                 <div class="mt-4 space-y-2 text-gray-600">
+                    <!-- Lokacija -->
                     <div class="flex items-center text-sm">
                         <i class="fa-solid fa-location-dot text-red-500 mr-2.5 text-base"></i>
                         <span>Dunavskih virova 38, Zemun</span>
                     </div>
+                    <!-- Snaga -->
                     <div class="flex items-center text-sm">
                         <i class="fa-solid fa-battery-three-quarters text-emerald-500 mr-2 text-base"></i>
                         <span class="font-medium">20kW DC</span>
@@ -43,26 +52,31 @@
                 </div>
             </div>
 
-            <button id="checkInBtn" class="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] transition-all text-white font-bold py-4 rounded-xl text-lg shadow-sm cursor-pointer">
+            <!-- Zeleno Check-in dugme -->
+            <button id="checkInBtn" class="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white font-bold py-4 rounded-xl text-lg shadow-sm cursor-pointer">
                 Check-in
             </button>
         </div>
 
-        <div class="border border-gray-100 rounded-2xl p-5 bg-gray-50/50">
+        <!-- Lista čekanja -->
+        <div class="border border-gray-100 rounded-2xl p-5 bg-gray-50">
             <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center text-gray-700 font-bold text-lg">
                     <span class="mr-2">📋</span> Lista čekanja
                 </div>
+                <!-- Brojač ljudi u redu -->
                 <span id="queueCounter" class="bg-blue-50 text-blue-600 font-bold w-7 h-7 flex items-center justify-center rounded-full text-sm border border-blue-100">
                     0
                 </span>
             </div>
             
+            <!-- Status reda -->
             <p id="queueStatus" class="text-center text-gray-400 py-4 font-medium">Nema ljudi u redu</p>
         </div>
 
     </div>
 
+    <!-- Logika za dugme -->
     <script>
         const btn = document.getElementById('checkInBtn');
         const counter = document.getElementById('queueCounter');
