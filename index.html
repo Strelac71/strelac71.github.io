@@ -30,7 +30,7 @@
         <div class="border-2 border-emerald-400 rounded-2xl p-5 mb-5 relative bg-white shadow-sm">
             
             <!-- Status bedž: Slobodan -->
-            <div class="absolute top-5 right-5 bg-emerald-50 text-emerald-600 font-semibold px-3 py-1 rounded-full text-sm border border-emerald-100">
+            <div id="status-tekst" class="absolute
                 Slobodan
             </div>
 
@@ -53,7 +53,7 @@
             </div>
 
             <!-- Zeleno Check-in dugme -->
-            <button id="checkInBtn" class="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white font-bold py-4 rounded-xl text-lg shadow-sm cursor-pointer">
+            <button id="check-in-btn" class="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white font-bold py-4 rounded-xl text-lg shadow-sm cursor-pointer">
                 Check-in
             </button>
         </div>
@@ -105,6 +105,70 @@
             }
         });
     </script>
+ <!-- Učitavanje najnovijih Firebase modula sa zvaničnog veba -->
+<script type="module">
+  import { initializeApp } from "https://gstatic.com";
+  import { getDatabase, ref, set, onValue } from "https://gstatic.com";
 
+  // Tvoja tačna konfiguracija sa ekrana
+  const firebaseConfig = {
+    apiKey: "AIzaSyDi3jmhCordBvkXMLDf8",
+    authDomain: "://firebaseapp.com",
+    databaseURL: "https://firebasedatabase.app",
+    projectId: "lidl-punjac",
+    storageBucket: "://appspot.com",
+    messagingSenderId: "97822670918",
+    appId: "1:97822670918:web:3f4ea8083"
+  };
+
+  // Inicijalizacija aplikacije i baze
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+  const statusRef = ref(database, 'punjac_galenika/status');
+
+  // Selektovanje tvojih elemenata sa stranice
+  const statusBadge = document.getElementById("status-tekst");
+  const checkInBtn = document.getElementById("check-in-btn");
+
+  let trenutnoZauzet = false;
+
+  // 1. SLUŠANJE PROMENA U REALNOM VREMENU (Automatski menja ekran svima)
+  onValue(statusRef, (snapshot) => {
+    const statusIzBaze = snapshot.val();
+    
+    if (statusIzBaze === 'zauzet') {
+      trenutnoZauzet = true;
+      
+      // Izgled ekrana kada je punjač zauzet
+      statusBadge.innerText = "Zauzet";
+      statusBadge.style.color = "#ef4444"; // Crveni tekst
+      statusBadge.style.backgroundColor = "#fee2e2"; // Svetlo crvena pozadina
+      
+      checkInBtn.innerText = "Check-out (Oslobodi punjač)";
+      checkInBtn.style.backgroundColor = "#6b7280"; // Siva boja dugmeta
+    } else {
+      trenutnoZauzet = false;
+      
+      // Izgled ekrana kada je punjač slobodan
+      statusBadge.innerText = "Slobodan";
+      statusBadge.style.color = "#10b981"; // Zeleni tekst
+      statusBadge.style.backgroundColor = "#e6f7ed"; // Svetlo zelena pozadina
+      
+      checkInBtn.innerText = "Check-in";
+      checkInBtn.style.backgroundColor = "#10b981"; // Zeleno dugme
+    }
+  });
+
+  // 2. REAKCIJA NA KLIK DUGMETA (Upisivanje novog stanja u Firebase)
+  checkInBtn.addEventListener('click', () => {
+    if (!trenutnoZauzet) {
+      // Ako je slobodan, klikom ga prebacujemo u zauzeto
+      set(statusRef, 'zauzet');
+    } else {
+      // Ako je zauzet, klikom ga oslobađamo
+      set(statusRef, 'slobodan');
+    }
+  });
+</script>
 </body>
-</html>
+
