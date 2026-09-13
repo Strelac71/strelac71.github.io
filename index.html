@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EV Punjač Lidl Zemun</title>
     <style>
-        /* Provereni i stopostotno stabilni stilovi koji drže tvoj dizajn na mestu */
+        /* Stabilni CSS stilovi koji drže tvoj dizajn i novi Popup na mestu */
         body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 16px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .kontejner { width: 100%; max-width: 448px; margin-top: 16px; box-sizing: border-box; }
         .gornji-status { text-align: center; margin-bottom: 24px; }
@@ -19,9 +19,6 @@
         .info-naziv { font-size: 20px; font-weight: 800; color: #1e293b; margin: 0 0 8px 0; padding-right: 60px; }
         .info-lokacija { font-size: 14px; color: #64748b; margin: 0 0 12px 0; font-weight: 500; display: flex; align-items: center; gap: 4px; }
         .info-snaga { display: inline-flex; align-items: center; padding: 4px 10px; font-size: 12px; font-weight: 700; background-color: #e6f7ed; color: #10b981; border: 1px solid #d1fae5; border-radius: 8px; }
-        .labela { display: block; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-        .input-polje { width: 100%; padding: 12px 16px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; font-size: 14px; font-weight: 600; color: #334155; box-sizing: border-box; transition: all 0.2s; }
-        .input-polje:focus { outline: none; border-color: #10b981; background-color: white; }
         .korisnik-box { border: 1px solid #fecaca; border-radius: 16px; padding: 14px 16px; background-color: #fee2e2; display: flex; align-items: center; justify-content: space-between; }
         .profil-avatar { width: 44px; height: 44px; background-color: #fecaca; border-radius: 9999px; display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 20px; }
         .korisnik-ime-tekst { font-size: 18px; font-weight: 900; color: #1e293b; margin: 0; }
@@ -40,6 +37,22 @@
         .lista-kontejner { margin-bottom: 16px; max-height: 160px; overflow-y: auto; }
         .prazan-red-tekst { text-align: center; color: #94a3b8; padding: 16px 0; font-size: 14px; font-weight: 500; margin: 0; }
         .hidden { display: none !important; }
+
+        /* POPUP MODAL STILOVI (Identični kao sa tvoje slike) */
+        .modal-prekrivač { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; box-sizing: border-box; padding: 16px; }
+        .modal-telo { background-color: white; width: 100%; max-width: 400px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); box-sizing: border-box; }
+        .modal-naslov { font-size: 24px; font-weight: 800; color: #1e293b; margin: 0 0 20px 0; }
+        .modal-labela { display: block; font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 8px; }
+        .modal-input { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; color: #334155; box-sizing: border-box; margin-bottom: 20px; }
+        .modal-input:focus { outline: none; border-color: #10b981; }
+        .slider-vrednost { text-align: center; font-size: 24px; font-weight: 900; color: #10b981; margin: 12px 0 24px 0; }
+        .modal-dugmad-red { display: flex; gap: 12px; }
+        .btn-otkaži { flex: 1; padding: 12px; background-color: #e2e8f0; color: #475569; font-weight: 700; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; }
+        .btn-potvrdi { flex: 1; padding: 12px; background-color: #10b981; color: white; font-weight: 700; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; }
+        
+        /* Izgled klizača (Slidera) sa slike */
+        .modal-slider { width: 100%; -webkit-appearance: none; height: 6px; background: #e2e8f0; border-radius: 9999px; outline: none; margin: 12px 0; }
+        .modal-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -65,13 +78,7 @@
             <div class="info-snaga">🧃 20kW DC</div>
           </div>
 
-          <!-- Polje za unos imena (Prikazuje se kad je slobodan) -->
-          <div id="ime-kontejner" style="margin-top: 20px;">
-              <label class="labela">Ukucaj svoje ime iz Viber grupe:</label>
-              <input id="korisnik-ime" type="text" placeholder="Npr. Goran, Nikola, Dejan..." class="input-polje">
-          </div>
-
-          <!-- BOX SA IMENOM VOZAČA (Prikazuje se samo kad je zauzet) -->
+          <!-- BOX SA IMENOM VOZAČA I TAJMEROM (Prikazuje se samo kad je zauzet) -->
           <div id="trenutni-korisnik-box" class="hidden" style="margin-top: 20px;">
               <div class="korisnik-box">
                   <div style="display: flex; align-items: center; gap: 12px;">
@@ -80,6 +87,10 @@
                           <h4 id="prikaz-ime" class="korisnik-ime-tekst">-</h4>
                           <p class="korisnik-status-tekst">Trenutno puni</p>
                       </div>
+                  </div>
+                  <div style="text-align: right;">
+                      <div id="prikaz-tajmer" style="font-size: 20px; font-weight: 900; color: #ef4444;">- min</div>
+                      <p style="font-size: 10px; color: #64748b; font-weight: 700; margin: 0; text-transform: uppercase;">preostalo</p>
                   </div>
               </div>
           </div>
@@ -107,68 +118,30 @@
 
     </div>
 
+    <!-- ISKAČUĆI PROZOR (POPUP MODAL) - Skriven po defaultu -->
+    <div id="checkin-modal" class="modal-prekrivač hidden">
+        <div class="modal-telo">
+            <h3 class="modal-naslov">Check-in</h3>
+            
+            <label class="modal-labela">Tvoje ime:</label>
+            <input id="modal-ime-input" type="text" placeholder="Unesi ime..." class="modal-input">
+            
+            <label class="modal-labela">Koliko dugo? (minuta)</label>
+            <input id="modal-vreme-slider" type="range" min="10" max="180" value="30" step="5" class="modal-slider">
+            
+            <div id="slider-prikaz-minuta" class="slider-vrednost">30 min</div>
+            
+            <div class="modal-dugmad-red">
+                <button id="modal-otkaži-btn" class="btn-otkaži">Otkaži</button>
+                <button id="modal-potvrdi-btn" class="btn-potvrdi">Potvrdi</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Internet veza sa Firebase bazom podataka -->
     <script type="module">
       import { initializeApp } from "https://gstatic.com";
       import { getDatabase, ref, set, onValue } from "https://gstatic.com";
 
-      // Tvoja Firebase konfiguracija baze
       const firebaseConfig = {
-        apiKey: "AIzaSyDi3jmhCordBvkXMLDf8",
-        authDomain: "://firebaseapp.com",
-        databaseURL: "https://firebasedatabase.app",
-        projectId: "lidl-punjac",
-        storageBucket: "://appspot.com",
-        messagingSenderId: "97822670918",
-        appId: "1:97822670918:web:3f4ea8083"
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const database = getDatabase(app);
-      const statusRef = ref(database, 'punjac_zemun/status');
-
-      const glavnaKartica = document.getElementById("glavna-kartica");
-      const statusBadge = document.getElementById("status-tekst");
-      const checkInBtn = document.getElementById("check-in-btn");
-      const imeKontejner = document.getElementById("ime-kontejner");
-      const korisnikImeInput = document.getElementById("korisnik-ime");
-      const trenutniKorisnikBox = document.getElementById("trenutni-korisnik-box");
-      const prikazIme = document.getElementById("prikaz-ime");
-
-      let trenutnoZauzet = false;
-
-      // 1. Uživo slušanje promena u bazi podataka i osvežavanje ekrana
-      onValue(statusRef, (snapshot) => {
-        const podaci = snapshot.val();
-        
-        if (podaci && podaci.stanje === 'zauzet') {
-          trenutnoZauzet = true;
-          
-          statusBadge.innerText = "Zauzet";
-          statusBadge.className = "status-bedz status-zauzet";
-          glavnaKartica.className = "kartica kartica-zauzeta";
-          
-          imeKontejner.classList.add("hidden");
-          trenutniKorisnikBox.classList.remove("hidden");
-          prikazIme.innerText = podaci.koPuni;
-          
-          checkInBtn.innerText = "Check-out (Oslobodi punjač)";
-          checkInBtn.className = "dugme dugme-sivo";
-        } else {
-          trenutnoZauzet = false;
-          
-          statusBadge.innerText = "Slobodan";
-          statusBadge.className = "status-bedz status-slobodan";
-          glavnaKartica.className = "kartica";
-          
-          imeKontejner.classList.remove("hidden");
-          trenutniKorisnikBox.classList.add("hidden");
-          
-          checkInBtn.innerText = "Check-in";
-          checkInBtn.className = "dugme dugme-zeleno";
-        }
-      });
-
-      // 2. Klik na Check-in / Check-out dugme
-      checkInBtn.addEventListener('click', () => {
-          const unesenoIme = korisnikImeInput.value.trim();if (!trenutnoZauzet) {if (!unesenoIme) {alert("Ukucaj svoje ime iz Viber grupe pre nego što pritisneš Check-in!");return;}set(statusRef, {stanje: 'zauzet',koPuni: unesenoIme});korisnikImeInput.value = "";} else {set(statusRef, {stanje: 'slobodan',koPuni: ''});}});
+          apiKey: "AIzaSyDi3jmhCordBvkXMLDf8",authDomain: "firebaseapp.com",databaseURL: "firebasedatabase.app",projectId: "lidl-punjac",storageBucket: "appspot.com",messagingSenderId: "97822670918",appId: "1:97822670918:web:3f4ea8083"};const app = initializeApp(firebaseConfig);const database = getDatabase(app);const statusRef = ref(database, 'punjac_zemun/status');// Elementi sa glavnog ekranaconst glavnaKartica = document.getElementById("glavna-kartica");const statusBadge = document.getElementById("status-tekst");const checkInBtn = document.getElementById("check-in-btn");const trenutniKorisnikBox = document.getElementById("trenutni-korisnik-box");const prikazIme = document.getElementById("prikaz-ime");const prikazTajmer = document.getElementById("prikaz-tajmer");// Elementi iz iskačućeg prozora (Modala)const checkinModal = document.getElementById("checkin-modal");const modalImeInput = document.getElementById("modal-ime-input");const modalVremeSlider = document.getElementById("modal-vreme-slider");const sliderPrikazMinuta = document.getElementById("slider-prikaz-minuta");const modalOtkažiBtn = document.getElementById("modal-otkaži-btn");const modalPotvrdiBtn = document.getElementById("modal-potvrdi-btn");let trenutnoZauzet = false;let intervalTajmera = null;// Slušanje pomeranja klizača (Slidera) u realnom vremenumodalVremeSlider.addEventListener('input', (e) => {sliderPrikazMinuta.innerText = e.target.value + " min";});// Slušanje stanja punjača iz Firebase bazeonValue(statusRef, (snapshot) => {const podaci = snapshot.val();clearInterval(intervalTajmera);if (podaci && podaci.stanje === 'zauzet') {trenutnoZauzet = true;statusBadge.innerText = "Zauzet";statusBadge.className = "status-bedz status-zauzet";glavnaKartica.className = "kartica kartica-zauzeta";trenutniKorisnikBox.classList.remove("hidden");prikazIme.innerText = podaci.koPuni;checkInBtn.innerText = "Check-out (Oslobodi punjač)";checkInBtn.className = "dugme dugme-sivo";// Logika za odbrojavanje preostalog vremenaconst vremePocetka = podaci.vremePocetka;const maksMinuta = parseInt(podaci.trajanjeMinuta || 30);function azurirajVreme() {const protekloSekundi = Math.floor((Date.now() - vremePocetka) / 1000);const protekloMinuta = Math.floor(protekloSekundi / 60);const preostaloMinuta = maksMinuta - protekloMinuta;if (preostaloMinuta <= 0) {prikazTajmer.innerText = "Isteklo!";clearInterval(intervalTajmera);} else {prikazTajmer.innerText = preostaloMinuta + " min";}}azurirajVreme();intervalTajmera = setInterval(azurirajVreme, 30000); // Osvežava na 30 sekundi} else {trenutnoZauzet = false;statusBadge.innerText = "Slobodan";statusBadge.className = "status-bedz status-slobodan";glavnaKartica.className = "kartica";trenutniKorisnikBox.classList.add("hidden");checkInBtn.innerText = "Check-in";checkInBtn.className = "dugme dugme-zeleno";}});// Klik na glavno dugme na karticicheckInBtn.addEventListener('click', () => {if (!trenutnoZauzet) {// Ako je slobodan, otvori iskačući prozor sa slikemodalImeInput.value = "";modalVremeSlider.value = "30";sliderPrikazMinuta.innerText = "30 min";checkinModal.classList.remove("hidden");} else {// Ako je zauzet, odmah oslobodi punjač (Check-out)set(statusRef, {stanje: 'slobodan',koPuni: ''});}});// Dugme "Otkaži" unutar iskačućeg prozoramodalOtkažiBtn.addEventListener('click', () => {checkinModal.classList.add("hidden");});// Dugme "Potvrdi" unutar iskačućeg prozora (Upisuje podatke u bazu)modalPotvrdiBtn.addEventListener('click', () => {const ime = modalImeInput.value.trim();const izabranoVreme = modalVremeSlider.value;if (!ime) {alert("Molimo te unesi svoje ime pre potvrde!");return;}// Šaljemo sve podatke u Firebaseset(statusRef, {stanje: 'zauzet',koPuni: ime,vremePocetka: Date.now(),trajanjeMinuta: izabranoVreme});// Zatvori prozorcheckinModal.classList.add("hidden");});
