@@ -6,8 +6,6 @@
     <title>EV Punjači - Lidl Galenika</title>
     <!-- Univerzalni Tailwind CSS v3 koji radi na svim mobilnim telefonima -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome ikonice -->
-    <link rel="stylesheet" href="https://cloudflare.com">
 </head>
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col items-center p-4">
 
@@ -26,34 +24,34 @@
             </div>
         </div>
 
-        <!-- Glavna kartica punjača -->
         <!-- GLAVNA KARTICA PUNJAČA -->
-<div class="relative bg-white border border-emerald-200 rounded-2xl p-6 shadow-sm">
-  
-  <!-- STATUS BADGE (Gore desno) -->
-  <div id="status-tekst" class="absolute top-5 right-5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200">
-    Slobodan
-  </div>
+        <div class="relative bg-white border border-emerald-200 rounded-2xl p-6 shadow-sm mb-6">
+          
+          <!-- STATUS BADGE (Gore desno) -->
+          <div id="status-tekst" class="absolute top-5 right-5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200">
+            Slobodan
+          </div>
 
-  <!-- INFORMACIJE O PUNJAČU -->
-  <div class="space-y-2">
-    <h3 class="text-xl font-bold text-gray-800 pr-20">EV Punjač Lidl Galenika</h3>
-    <p class="text-sm text-gray-500 flex items-center gap-1">
-      <span class="text-gray-400">📍</span> Dunavskih virova 38, Zemun
-    </p>
-    <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-      ⚡ 20kW DC
-    </div>
-  </div>
+          <!-- INFORMACIJE O PUNJAČU -->
+          <div class="space-y-2">
+            <h3 class="text-xl font-bold text-gray-800 pr-20">EV Punjač Lidl Galenika</h3>
+            <p class="text-sm text-gray-500 flex items-center gap-1">
+              <span class="text-gray-400">📍</span> Dunavskih virova 38, Zemun
+            </p>
+            <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+              ⚡ 20kW DC
+            </div>
+          </div>
 
-  <!-- DUGME ZA CHECK-IN (Izmešteno ispod teksta da nema preklapanja) -->
-  <div class="mt-5">
-    <button id="check-in-btn" class="w-full py-3 text-white font-medium rounded-xl bg-emerald-500 hover:bg-emerald-600 transition duration-200 shadow-md">
-      Check-in
-    </button>
-  </div>
+          <!-- DUGME ZA CHECK-IN -->
+          <div class="mt-5">
+            <button id="check-in-btn" class="w-full py-3 text-white font-medium rounded-xl bg-emerald-500 hover:bg-emerald-600 transition duration-200 shadow-md">
+              Check-in
+            </button>
+          </div>
 
-</div>
+        </div>
+
         <!-- Lista čekanja -->
         <div class="border border-gray-100 rounded-2xl p-5 bg-gray-50">
             <div class="flex justify-between items-center mb-4">
@@ -72,69 +70,68 @@
 
     </div>
 
-    <!-- Logika za dugme -->
-    <script>
+    <!-- Ispravljena Firebase Realtime logika -->
     <script type="module">
-  import { initializeApp } from "https://gstatic.com";
-  import { getDatabase, ref, set, onValue } from "https://gstatic.com";
+      import { initializeApp } from "https://gstatic.com";
+      import { getDatabase, ref, set, onValue } from "https://gstatic.com";
 
-  // Tvoja tačna konfiguracija sa ekrana
-  const firebaseConfig = {
-    apiKey: "AIzaSyDi3jmhCordBvkXMLDf8",
-    authDomain: "://firebaseapp.com",
-    databaseURL: "https://firebasedatabase.app",
-    projectId: "lidl-punjac",
-    storageBucket: "://appspot.com",
-    messagingSenderId: "97822670918",
-    appId: "1:97822670918:web:3f4ea8083"
-  };
+      // Tvoja tačna konfiguracija sa ekrana
+      const firebaseConfig = {
+        apiKey: "AIzaSyDi3jmhCordBvkXMLDf8",
+        authDomain: "lidl-punjac.firebaseapp.com",
+        databaseURL: "https://lidl-punjac-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "lidl-punjac",
+        storageBucket: "lidl-punjac.appspot.com",
+        messagingSenderId: "97822670918",
+        appId: "1:97822670918:web:3f4ea8083"
+      };
 
-  // Inicijalizacija aplikacije i baze
-  const app = initializeApp(firebaseConfig);
-  const database = getDatabase(app);
-  const statusRef = ref(database, 'punjac_galenika/status');
+      // Inicijalizacija aplikacije i baze
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+      const statusRef = ref(database, 'punjac_galenika/status');
 
-  // Selektovanje elemenata sa stranice
-  const statusBadge = document.getElementById("status-tekst");
-  const checkInBtn = document.getElementById("check-in-btn");
+      // Selektovanje elemenata sa stranice
+      const statusBadge = document.getElementById("status-tekst");
+      const checkInBtn = document.getElementById("check-in-btn");
 
-  let trenutnoZauzet = false;
+      let trenutnoZauzet = false;
 
-  // 1. SLUŠANJE PROMENA U REALNOM VREMENU (Menja ekran bez osvežavanja)
-  onValue(statusRef, (snapshot) => {
-    const statusIzBaze = snapshot.val();
-    
-    if (statusIzBaze === 'zauzet') {
-      trenutnoZauzet = true;
-      
-      // Izgled kada je PUNJAČ ZAUZET (Crvene moderne Tailwind boje)
-      statusBadge.innerText = "Zauzet";
-      statusBadge.className = "absolute top-5 right-5 px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600 border border-red-200";
-      
-      // Izgled dugmeta kada je zauzeto (Sivo dugme)
-      checkInBtn.innerText = "Check-out (Oslobodi punjač)";
-      checkInBtn.className = "w-full py-3 mt-4 text-white font-medium rounded-xl bg-gray-500 hover:bg-gray-600 transition duration-200 shadow-md";
-    } else {
-      trenutnoZauzet = false;
-      
-      // Izgled kada je PUNJAČ SLOBODAN (Zelene moderne Tailwind boje)
-      statusBadge.innerText = "Slobodan";
-      statusBadge.className = "absolute top-5 right-5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200";
-      
-      // Izgled dugmeta kada je slobodno (Zeleno dugme)
-      checkInBtn.innerText = "Check-in";
-      checkInBtn.className = "w-full py-3 mt-4 text-white font-medium rounded-xl bg-emerald-500 hover:bg-emerald-600 transition duration-200 shadow-md";
-    }
-  });
+      // 1. SLUŠANJE PROMENA U REALNOM VREMENU (Menja ekran bez osvežavanja)
+      onValue(statusRef, (snapshot) => {
+        const statusIzBaze = snapshot.val();
+        
+        if (statusIzBaze === 'zauzet') {
+          trenutnoZauzet = true;
+          
+          // Izgled kada je PUNJAČ ZAUZET (Crvene moderne Tailwind boje)
+          statusBadge.innerText = "Zauzet";
+          statusBadge.className = "absolute top-5 right-5 px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600 border border-red-200";
+          
+          // Izgled dugmeta kada je zauzeto (Sivo dugme)
+          checkInBtn.innerText = "Check-out (Oslobodi punjač)";
+          checkInBtn.className = "w-full py-3 text-white font-medium rounded-xl bg-gray-500 hover:bg-gray-600 transition duration-200 shadow-md";
+        } else {
+          trenutnoZauzet = false;
+          
+          // Izgled kada je PUNJAČ SLOBODAN (Zelene moderne Tailwind boje)
+          statusBadge.innerText = "Slobodan";
+          statusBadge.className = "absolute top-5 right-5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200";
+          
+          // Izgled dugmeta kada je slobodno (Zeleno dugme)
+          checkInBtn.innerText = "Check-in";
+          checkInBtn.className = "w-full py-3 text-white font-medium rounded-xl bg-emerald-500 hover:bg-emerald-600 transition duration-200 shadow-md";
+        }
+      });
 
-  // 2. AKCIJA NA KLIK DUGMETA
-  checkInBtn.addEventListener('click', () => {
-    if (!trenutnoZauzet) {
-      set(statusRef, 'zauzet');
-    } else {
-      set(statusRef, 'slobodan');
-    }
-  });
-</script>
+      // 2. AKCIJA NA KLIK DUGMETA
+      checkInBtn.addEventListener('click', () => {
+        if (!trenutnoZauzet) {
+          set(statusRef, 'zauzet');
+        } else {
+          set(statusRef, 'slobodan');
+        }
+      });
+    </script>
 </body>
-
+</html>
