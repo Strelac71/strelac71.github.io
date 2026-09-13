@@ -4,144 +4,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EV Punjač Lidl Zemun</title>
-    <style>
-        /* Stabilni CSS stilovi koji drže tvoj dizajn i novi Popup na mestu */
-        body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 16px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .kontejner { width: 100%; max-width: 448px; margin-top: 16px; box-sizing: border-box; }
-        .gornji-status { text-align: center; margin-bottom: 24px; }
-        .gornji-status p { color: #64748b; font-size: 14px; font-weight: 500; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
-        .online-bedz { display: inline-flex; align-items: center; justify-content: center; background-color: #e6f7ed; color: #10b981; font-weight: 700; padding: 4px 16px; border-radius: 9999px; font-size: 12px; margin-top: 8px; border: 1px solid #d1fae5; }
-        .kartica { background-color: white; border: 2px solid #10b981; border-radius: 24px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 16px; position: relative; box-sizing: border-box; transition: all 0.3s ease; }
-        .kartica.zauzeta { border-color: #fca5a5; }
-        .status-bedz { position: absolute; top: 24px; right: 24px; padding: 4px 12px; font-size: 12px; font-weight: 700; border-radius: 9999px; }
-        .status-slobodan { background-color: #e6f7ed; color: #10b981; border: 1px solid #d1fae5; }
-        .status-zauzet { background-color: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
-        .info-naziv { font-size: 20px; font-weight: 800; color: #1e293b; margin: 0 0 8px 0; padding-right: 60px; }
-        .info-lokacija { font-size: 14px; color: #64748b; margin: 0 0 12px 0; font-weight: 500; display: flex; align-items: center; gap: 4px; }
-        .info-snaga { display: inline-flex; align-items: center; padding: 4px 10px; font-size: 12px; font-weight: 700; background-color: #e6f7ed; color: #10b981; border: 1px solid #d1fae5; border-radius: 8px; }
-        .korisnik-box { border: 1px solid #fecaca; border-radius: 16px; padding: 14px 16px; background-color: #fee2e2; display: flex; align-items: center; justify-content: space-between; }
-        .profil-avatar { width: 44px; height: 44px; background-color: #fecaca; border-radius: 9999px; display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 20px; }
-        .korisnik-ime-tekst { font-size: 18px; font-weight: 900; color: #1e293b; margin: 0; }
-        .korisnik-status-tekst { font-size: 12px; color: #64748b; margin: 2px 0 0 0; font-weight: 500; }
-        .dugme { width: 100%; padding: 14px; color: white; font-weight: 700; border-radius: 16px; border: none; font-size: 16px; cursor: pointer; transition: all 0.15s; font-family: inherit; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .dugme-zeleno { background-color: #10b981; margin-top: 20px; }
-        .dugme-zeleno:hover { background-color: #059669; }
-        .dugme-sivo { background-color: #6b7280; margin-top: 20px; }
-        .dugme-sivo:hover { background-color: #4b5563; }
-        .dugme-plavo { background-color: #3b82f6; }
-        .dugme-plavo:hover { background-color: #2563eb; }
-        .lista-kartica { background-color: white; border: 1px solid #f1f5f9; border-radius: 24px; padding: 20px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05); margin-bottom: 20px; box-sizing: border-box; }
-        .lista-zaglavlje { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .lista-naslov { font-size: 16px; font-weight: 800; color: #334155; margin: 0; display: flex; align-items: center; gap: 8px; }
-        .lista-brojac { background-color: #eff6ff; color: #2563eb; font-weight: 900; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 9999px; font-size: 12px; border: 1px solid #dbeafe; }
-        .lista-kontejner { margin-bottom: 16px; max-height: 160px; overflow-y: auto; }
-        .prazan-red-tekst { text-align: center; color: #94a3b8; padding: 16px 0; font-size: 14px; font-weight: 500; margin: 0; }
-        .hidden { display: none !important; }
-
-        /* POPUP MODAL STILOVI (Identični kao sa tvoje slike) */
-        .modal-prekrivač { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; box-sizing: border-box; padding: 16px; }
-        .modal-telo { background-color: white; width: 100%; max-width: 400px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); box-sizing: border-box; }
-        .modal-naslov { font-size: 24px; font-weight: 800; color: #1e293b; margin: 0 0 20px 0; }
-        .modal-labela { display: block; font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 8px; }
-        .modal-input { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; color: #334155; box-sizing: border-box; margin-bottom: 20px; }
-        .modal-input:focus { outline: none; border-color: #10b981; }
-        .slider-vrednost { text-align: center; font-size: 24px; font-weight: 900; color: #10b981; margin: 12px 0 24px 0; }
-        .modal-dugmad-red { display: flex; gap: 12px; }
-        .btn-otkaži { flex: 1; padding: 12px; background-color: #e2e8f0; color: #475569; font-weight: 700; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; }
-        .btn-potvrdi { flex: 1; padding: 12px; background-color: #10b981; color: white; font-weight: 700; border-radius: 12px; border: none; font-size: 16px; cursor: pointer; }
-        
-        /* Izgled klizača (Slidera) sa slike */
-        .modal-slider { width: 100%; -webkit-appearance: none; height: 6px; background: #e2e8f0; border-radius: 9999px; outline: none; margin: 12px 0; }
-        .modal-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; cursor: pointer; }
-    </style>
+    <!-- Pouzdan i zvaničan Tailwind CSS koji provereno radi na tvom sajtu -->
+    <script src="https://tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-slate-50 font-sans min-h-screen flex flex-col items-center p-4">
 
     <!-- Glavni kontejner aplikacije -->
-    <div class="kontejner">
+    <div class="w-full max-w-md mt-4">
         
         <!-- Gornji Online Status -->
-        <div class="gornji-status">
-            <div class="online-bedz">✓ Online</div>
+        <div class="text-center mb-4">
+            <div class="inline-flex items-center justify-center bg-emerald-50 text-emerald-600 font-semibold px-4 py-1 rounded-full text-xs mt-2 border border-emerald-100">
+                ✓ Online
+            </div>
         </div>
 
         <!-- GLAVNA KARTICA PUNJAČA -->
-        <div id="glavna-kartica" class="kartica">
+        <div id="glavna-kartica" class="bg-white border-2 border-emerald-500 rounded-3xl p-6 shadow-sm mb-4 relative transition-all duration-300">
           
-          <!-- STATUS BADGE -->
-          <div id="status-tekst" class="status-bedz status-slobodan">Slobodan</div>
-
-          <!-- INFORMACIJE O PUNJAČU -->
-          <div>
-            <h2 class="info-naziv">EV Punjač Lidl Zemun</h2>
-            <p class="info-lokacija">📍 Dunavskih virova 38, Zemun</p>
-            <div class="info-snaga">🧃 20kW DC</div>
+          <!-- STATUS BADGE (Gore desno) -->
+          <div id="status-tekst" class="absolute top-6 right-6 px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200">
+            Slobodan
           </div>
 
-          <!-- BOX SA IMENOM VOZAČA I TAJMEROM (Prikazuje se samo kad je zauzet) -->
-          <div id="trenutni-korisnik-box" class="hidden" style="margin-top: 20px;">
-              <div class="korisnik-box">
-                  <div style="display: flex; align-items: center; gap: 12px;">
-                      <div class="profil-avatar">👤</div>
-                      <div>
-                          <h4 id="prikaz-ime" class="korisnik-ime-tekst">-</h4>
-                          <p class="korisnik-status-tekst">Trenutno puni</p>
-                      </div>
+          <!-- INFORMACIJE O PUNJAČU -->
+          <div class="space-y-2 mb-5">
+            <h2 class="text-xl font-extrabold text-slate-800 pr-20">EV Punjač Lidl Zemun</h2>
+            <p class="text-sm text-slate-500 flex items-center gap-1 font-medium">
+              <span class="text-red-500">📍</span> Dunavskih virova 38, Zemun
+            </p>
+            <div class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+              🔋 20kW DC
+            </div>
+          </div>
+
+          <!-- BOX SA IMENOM VOZAČA I TAJMEROM (Prikazuje se samo kada je ZAUZETO) -->
+          <div id="trenutni-korisnik-box" class="hidden border border-rose-100 rounded-2xl p-4 bg-rose-50/40 flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center text-rose-500 text-xl font-bold shadow-inner">
+                      👤
                   </div>
-                  <div style="text-align: right;">
-                      <div id="prikaz-tajmer" style="font-size: 20px; font-weight: 900; color: #ef4444;">- min</div>
-                      <p style="font-size: 10px; color: #64748b; font-weight: 700; margin: 0; text-transform: uppercase;">preostalo</p>
+                  <div>
+                      <h4 id="prikaz-ime" class="font-black text-slate-800 text-lg leading-tight">-</h4>
+                      <p class="text-xs text-slate-500 font-medium mt-0.5">Trenutno puni</p>
                   </div>
+              </div>
+              <div class="text-right">
+                  <div id="prikaz-tajmer" class="text-xl font-black text-red-500 tracking-tight">- min</div>
+                  <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">preostalo</p>
               </div>
           </div>
 
-          <!-- GLAVNO DUGME KARTICE -->
-          <button id="check-in-btn" class="dugme dugme-zeleno">Check-in</button>
+          <!-- GLAVNO DUGME -->
+          <div class="mt-5">
+            <button id="check-in-btn" class="w-full py-3.5 text-white font-bold rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] transition duration-150 shadow-md tracking-wide">
+              Check-in
+            </button>
+          </div>
 
         </div>
 
         <!-- LISTA ČEKANJA KARTICA -->
-        <div class="lista-kartica">
-            <div class="lista-zaglavlje">
-                <h3 class="lista-naslov">📋 Lista čekanja</h3>
-                <span id="queueCounter" class="lista-brojac">0</span>
+        <div class="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm mb-5">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center text-slate-700 font-extrabold text-base gap-2">
+                    📋 Lista čekanja
+                </div>
+                <span id="queueCounter" class="bg-blue-50 text-blue-600 font-black w-7 h-7 flex items-center justify-center rounded-full text-xs border border-blue-100">
+                    0
+                </span>
             </div>
             
-            <!-- Spisak ljudi u redu -->
-            <div id="lista-ljudi" class="lista-kontejner">
-                <p id="queueStatus" class="prazan-red-tekst">Nema ljudi u redu</p>
+            <div id="lista-ljudi" class="space-y-2 mb-4 max-h-40 overflow-y-auto">
+                <p id="queueStatus" class="text-center text-slate-400 py-4 text-sm font-medium">Nema ljudi u redu</p>
             </div>
 
-            <!-- DUGME ZA PRIDRUŽIVANJE REDU -->
-            <button id="red-dugme" class="dugme dugme-plavo">+ Pridruži se redu</button>
+            <button id="red-dugme" class="w-full py-3.5 text-white font-bold rounded-2xl bg-blue-500 hover:bg-blue-600 active:scale-[0.99] transition duration-150 shadow-md tracking-wide">
+              + Pridruži se redu
+            </button>
         </div>
 
     </div>
 
-    <!-- ISKAČUĆI PROZOR (POPUP MODAL) - Skriven po defaultu -->
-    <div id="checkin-modal" class="modal-prekrivač hidden">
-        <div class="modal-telo">
-            <h3 class="modal-naslov">Check-in</h3>
+    <!-- ISKAČUĆI PROZOR (POPUP MODAL) -->
+    <div id="checkin-modal" class="fixed inset-0 bg-slate-900 bg-opacity-40 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-xl transform transition-all">
+            <h3 class="text-2xl font-extrabold text-slate-800 mb-5">Check-in</h3>
             
-            <label class="modal-labela">Tvoje ime:</label>
-            <input id="modal-ime-input" type="text" placeholder="Unesi ime..." class="modal-input">
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Tvoje ime:</label>
+            <input id="modal-ime-input" type="text" placeholder="Unesi ime..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-emerald-400 focus:bg-white transition mb-5">
             
-            <label class="modal-labela">Koliko dugo? (minuta)</label>
-            <input id="modal-vreme-slider" type="range" min="10" max="180" value="30" step="5" class="modal-slider">
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Koliko dugo? (minuta)</label>
+            <input id="modal-vreme-slider" type="range" min="10" max="180" value="30" step="5" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-500 my-4">
             
-            <div id="slider-prikaz-minuta" class="slider-vrednost">30 min</div>
+            <div id="slider-prikaz-minuta" class="text-center text-2xl font-black text-emerald-500 mb-6">30 min</div>
             
-            <div class="modal-dugmad-red">
-                <button id="modal-otkaži-btn" class="btn-otkaži">Otkaži</button>
-                <button id="modal-potvrdi-btn" class="btn-potvrdi">Potvrdi</button>
+            <div class="flex gap-3">
+                <button id="modal-otkaz-btn" class="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl text-sm hover:bg-slate-200 transition">Otkaži</button>
+                <button id="modal-potvrdi-btn" class="flex-1 py-3 bg-emerald-500 text-white font-bold rounded-xl text-sm hover:bg-emerald-600 transition">Potvrdi</button>
             </div>
         </div>
     </div>
 
-    <!-- Internet veza sa Firebase bazom podataka -->
+    <!-- Kompletan Firebase JavaScript u jednom tagu -->
     <script type="module">
       import { initializeApp } from "https://gstatic.com";
-      import { getDatabase, ref, set, onValue } from "https://gstatic.com";
+      import { getDatabase, ref, set, onValue, push, remove } from "https://gstatic.com";
 
       const firebaseConfig = {
-          apiKey: "AIzaSyDi3jmhCordBvkXMLDf8",authDomain: "firebaseapp.com",databaseURL: "firebasedatabase.app",projectId: "lidl-punjac",storageBucket: "appspot.com",messagingSenderId: "97822670918",appId: "1:97822670918:web:3f4ea8083"};const app = initializeApp(firebaseConfig);const database = getDatabase(app);const statusRef = ref(database, 'punjac_zemun/status');// Elementi sa glavnog ekranaconst glavnaKartica = document.getElementById("glavna-kartica");const statusBadge = document.getElementById("status-tekst");const checkInBtn = document.getElementById("check-in-btn");const trenutniKorisnikBox = document.getElementById("trenutni-korisnik-box");const prikazIme = document.getElementById("prikaz-ime");const prikazTajmer = document.getElementById("prikaz-tajmer");// Elementi iz iskačućeg prozora (Modala)const checkinModal = document.getElementById("checkin-modal");const modalImeInput = document.getElementById("modal-ime-input");const modalVremeSlider = document.getElementById("modal-vreme-slider");const sliderPrikazMinuta = document.getElementById("slider-prikaz-minuta");const modalOtkažiBtn = document.getElementById("modal-otkaži-btn");const modalPotvrdiBtn = document.getElementById("modal-potvrdi-btn");let trenutnoZauzet = false;let intervalTajmera = null;// Slušanje pomeranja klizača (Slidera) u realnom vremenumodalVremeSlider.addEventListener('input', (e) => {sliderPrikazMinuta.innerText = e.target.value + " min";});// Slušanje stanja punjača iz Firebase bazeonValue(statusRef, (snapshot) => {const podaci = snapshot.val();clearInterval(intervalTajmera);if (podaci && podaci.stanje === 'zauzet') {trenutnoZauzet = true;statusBadge.innerText = "Zauzet";statusBadge.className = "status-bedz status-zauzet";glavnaKartica.className = "kartica kartica-zauzeta";trenutniKorisnikBox.classList.remove("hidden");prikazIme.innerText = podaci.koPuni;checkInBtn.innerText = "Check-out (Oslobodi punjač)";checkInBtn.className = "dugme dugme-sivo";// Logika za odbrojavanje preostalog vremenaconst vremePocetka = podaci.vremePocetka;const maksMinuta = parseInt(podaci.trajanjeMinuta || 30);function azurirajVreme() {const protekloSekundi = Math.floor((Date.now() - vremePocetka) / 1000);const protekloMinuta = Math.floor(protekloSekundi / 60);const preostaloMinuta = maksMinuta - protekloMinuta;if (preostaloMinuta <= 0) {prikazTajmer.innerText = "Isteklo!";clearInterval(intervalTajmera);} else {prikazTajmer.innerText = preostaloMinuta + " min";}}azurirajVreme();intervalTajmera = setInterval(azurirajVreme, 30000); // Osvežava na 30 sekundi} else {trenutnoZauzet = false;statusBadge.innerText = "Slobodan";statusBadge.className = "status-bedz status-slobodan";glavnaKartica.className = "kartica";trenutniKorisnikBox.classList.add("hidden");checkInBtn.innerText = "Check-in";checkInBtn.className = "dugme dugme-zeleno";}});// Klik na glavno dugme na karticicheckInBtn.addEventListener('click', () => {if (!trenutnoZauzet) {// Ako je slobodan, otvori iskačući prozor sa slikemodalImeInput.value = "";modalVremeSlider.value = "30";sliderPrikazMinuta.innerText = "30 min";checkinModal.classList.remove("hidden");} else {// Ako je zauzet, odmah oslobodi punjač (Check-out)set(statusRef, {stanje: 'slobodan',koPuni: ''});}});// Dugme "Otkaži" unutar iskačućeg prozoramodalOtkažiBtn.addEventListener('click', () => {checkinModal.classList.add("hidden");});// Dugme "Potvrdi" unutar iskačućeg prozora (Upisuje podatke u bazu)modalPotvrdiBtn.addEventListener('click', () => {const ime = modalImeInput.value.trim();const izabranoVreme = modalVremeSlider.value;if (!ime) {alert("Molimo te unesi svoje ime pre potvrde!");return;}// Šaljemo sve podatke u Firebaseset(statusRef, {stanje: 'zauzet',koPuni: ime,vremePocetka: Date.now(),trajanjeMinuta: izabranoVreme});// Zatvori prozorcheckinModal.classList.add("hidden");});
+        apiKey: "AIzaSyDi3jmhCordBvkXMLDf8",
+        authDomain: "://firebaseapp.com",
+        databaseURL: "https://firebasedatabase.app",
+        projectId: "lidl-punjac",
+        storageBucket: "://appspot.com",
+        messagingSenderId: "97822670918",
+        appId: "1:97822670918:web:3f4ea8083"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+      
+      const statusRef = ref(database, 'punjac_zemun/status');
+      const redRef = ref(database, 'punjac_zemun/red');
+
+      const glavnaKartica = document.getElementById("glavna-kartica");
+      const statusBadge = document.getElementById("status-tekst");
+      const checkInBtn = document.getElementById("check-in-btn");
+      const redDugme = document.getElementById("red-dugme");
+      const trenutniKorisnikBox = document.getElementById("trenutni-korisnik-box");
+      const prikazIme = document.getElementById("prikaz-ime");
+      const prikazTajmer = document.getElementById("prikaz-tajmer");
+      const queueCounter = document.getElementById("queueCounter");
+      const listaLjudiContainer = document.getElementById("lista-ljudi");
+
+      const checkinModal = document.getElementById("checkin-modal");
+      const modalImeInput = document.getElementById("modal-ime-input");
+      const modalVremeSlider = document.getElementById("modal-vreme-slider");
+      const sliderPrikazMinuta = document.getElementById("slider-prikaz-minuta");
+      const modalOtkazBtn = document.getElementById("modal-otkaz-btn");
+      const modalPotvrdiBtn = document.getElementById("modal-potvrdi-btn");
+
+      let trenutnoZauzet = false;
+      let intervalTajmera = null;
+
+      modalVremeSlider.addEventListener('input', (e) => {
+          sliderPrikazMinuta.innerText = e.target.value + " min";
+      });
+
+      // 1. Slušanje stanja punjača uživo
+      onValue(statusRef, (snapshot) => {
+        const podaci = snapshot.val();
+        clearInterval(intervalTajmera);
+        
+        if (podaci && podaci.stanje === 'zauzet') {
+          trenutnoZauzet = true;
+          statusBadge.innerText = "Zauzet";
+          statusBadge.className = "absolute top-6 right-6 px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-600 border border-red-200";
+          glavnaKartica.className = "bg-white border-2 border-red-400 rounded-3xl p-6 shadow-sm mb-4 relative transition-all duration-300";
+          trenutniKorisnikBox.classList.remove("hidden");
+          prikazIme.innerText = podaci.koPuni;
+          checkInBtn.innerText = "Check-out (Oslobodi punjač)";
+          checkInBtn.className = "w-full py-3.5 text-white font-bold rounded-2xl bg-gray-500 hover:bg-gray-600 transition duration-150 shadow-md tracking-wide";
+
+          const vremePocetka = podaci.vremePocetka;
+          const maksMinuta = parseInt(podaci.trajanjeMinuta || 30);
+
+          function azurirajVreme() {
+              const protekloSekundi = Math.floor((Date.now() - vremePocetka) / 1000);
+              const protekloMinuta = Math.floor(protekloSekundi / 60);
+              const preostaloMinuta = maksMinuta - protekloMinuta;
+
+              if (preostaloMinuta <= 0) {
+                  prikazTajmer.innerText = "Isteklo!";
+                  clearInterval(intervalTajmera);
+              } else {
+                  prikazTajmer.innerText = preostaloMinuta + " min";
+              }
+          }
+          azurirajVreme();
+          intervalTajmera = setInterval(azurirajVreme, 30000);
+        } else {
+          trenutnoZauzet = false;
+          statusBadge.innerText = "Slobodan";
+            statusBadge.className = "absolute top-6 right-6 px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200";glavnaKartica.className = "bg-white border-2 border-emerald-500 rounded-3xl p-6 shadow-sm mb-4 relative transition-all duration-300";trenutniKorisnikBox.classList.add("hidden");checkInBtn.innerText = "Check-in";checkInBtn.className = "w-full py-3.5 text-white font-bold rounded-2xl bg-emerald-500 hover:bg-emerald-600 transition duration-150 shadow-md tracking-wide";}});// 2. Slušanje liste čekanja uživoonValue(redRef, (snapshot) => {listaLjudiContainer.innerHTML = "";let listaCekanjaLokalno = [];const podaci = snapshot.val();if (podaci) {Object.keys(podaci).forEach(kljuc => {listaCekanjaLokalno.push({ id: kljuc, ime: podaci[kljuc].ime, vreme: podaci[kljuc].vreme });});listaCekanjaLokalno.sort((a, b) => a.vreme - b.vreme);queueCounter.innerText = listaCekanjaLokalno.length;listaCekanjaLokalno.forEach((korisnik, indeks) => {const osobaRow = document.createElement("div");osobaRow.className = "flex justify-between items-center bg-gray-50 border border-gray-100 p-2.5 rounded-xl text-sm font-bold text-gray-700 mt-2 shadow-sm";osobaRow.innerHTML = <div class="flex items-center gap-2"> <span class="text-blue-500">${indeks + 1}.</span> <span>👤 ${korisnik.ime}</span> </div> <button class="text-xs text-red-500 font-semibold hover:underline" data-id="${korisnik.id}">Ukloni</button>;listaLjudiContainer.appendChild(osobaRow);});listaLjudiContainer.querySelectorAll("button").forEach(btn => {btn.addEventListener("click", (e) => {const idZaBrisanje = e.target.getAttribute("data-id");remove(ref(database, punjac_zemun/red/${idZaBrisanje}));});});} else {queueCounter.innerText = "0";listaLjudiContainer.innerHTML = 'Nema ljudi u redu';}});// Klik na glavno dugmecheckInBtn.addEventListener('click', () => {if (!trenutnoZauzet) {modalImeInput.value = "";modalVremeSlider.value = "30";sliderPrikazMinuta.innerText = "30 min";checkinModal.classList.remove("hidden");} else {set(statusRef, { stanje: 'slobodan', koPuni: '' });}});modalOtkazBtn.addEventListener('click', () => { checkinModal.classList.add("hidden"); });modalPotvrdiBtn.addEventListener('click', () => {const ime = modalImeInput.value.trim();const izabranoVreme = modalVremeSlider.value;if (!ime) { alert("Molimo te unesi svoje ime!"); return; }set(statusRef, {stanje: 'zauzet',koPuni: ime,vremePocetka: Date.now(),trajanjeMinuta: izabranoVreme});checkinModal.classList.add("hidden");});// Klik na plavo dugme "+ Pridruži se redu"redDugme.addEventListener('click', () => {const imeZaRed = prompt("Ukucaj svoje ime iz Viber grupe da staneš u red:");if (imeZaRed && imeZaRed.trim() !== "") {push(redRef, { ime: imeZaRed.trim(), vreme: Date.now() });}});
