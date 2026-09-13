@@ -27,37 +27,33 @@
         </div>
 
         <!-- Glavna kartica punjača -->
-        <div class="border-2 border-emerald-400 rounded-2xl p-5 mb-5 relative bg-white shadow-sm">
-            
-            <!-- Status bedž: Slobodan -->
-            <div id="status-tekst" class="absolute
-                Slobodan
-            </div>
+        <!-- GLAVNA KARTICA PUNJAČA -->
+<div class="relative bg-white border border-emerald-200 rounded-2xl p-6 shadow-sm">
+  
+  <!-- STATUS BADGE (Gore desno) -->
+  <div id="status-tekst" class="absolute top-5 right-5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200">
+    Slobodan
+  </div>
 
-            <!-- Detalji o lokaciji -->
-            <div class="pr-20">
-                <h2 class="text-xl font-bold text-gray-800 leading-snug">EV Punjač Lidl Galenika</h2>
-                
-                <div class="mt-4 space-y-2 text-gray-600">
-                    <!-- Lokacija -->
-                    <div class="flex items-center text-sm">
-                        <i class="fa-solid fa-location-dot text-red-500 mr-2.5 text-base"></i>
-                        <span>Dunavskih virova 38, Zemun</span>
-                    </div>
-                    <!-- Snaga -->
-                    <div class="flex items-center text-sm">
-                        <i class="fa-solid fa-battery-three-quarters text-emerald-500 mr-2 text-base"></i>
-                        <span class="font-medium">20kW DC</span>
-                    </div>
-                </div>
-            </div>
+  <!-- INFORMACIJE O PUNJAČU -->
+  <div class="space-y-2">
+    <h3 class="text-xl font-bold text-gray-800 pr-20">EV Punjač Lidl Galenika</h3>
+    <p class="text-sm text-gray-500 flex items-center gap-1">
+      <span class="text-gray-400">📍</span> Dunavskih virova 38, Zemun
+    </p>
+    <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+      ⚡ 20kW DC
+    </div>
+  </div>
 
-            <!-- Zeleno Check-in dugme -->
-            <button id="check-in-btn" class="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white font-bold py-4 rounded-xl text-lg shadow-sm cursor-pointer">
-                Check-in
-            </button>
-        </div>
+  <!-- DUGME ZA CHECK-IN (Izmešteno ispod teksta da nema preklapanja) -->
+  <div class="mt-5">
+    <button id="check-in-btn" class="w-full py-3 text-white font-medium rounded-xl bg-emerald-500 hover:bg-emerald-600 transition duration-200 shadow-md">
+      Check-in
+    </button>
+  </div>
 
+</div>
         <!-- Lista čekanja -->
         <div class="border border-gray-100 rounded-2xl p-5 bg-gray-50">
             <div class="flex justify-between items-center mb-4">
